@@ -8,4 +8,8 @@ router["PUT /plan"] = async function (ctx: Context) {
     ctx.body = res;
 };
 
+router["DELETE /plan/:planId"] = async function (ctx: Context) {
+    await planService.deleteOne(ctx.params.planId);
+}
+
 export default router;

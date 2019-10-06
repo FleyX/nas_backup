@@ -1,12 +1,12 @@
 export default class Plan {
-    planId: Number = 0;
-    planName: String = "";
-    description: String = "";
-    sourcePath: String = "";
-    targetPath: String = "";
-    nextLaunchTime: Number = 0;
-    lanuchInterval: Number = 0;
-    latestHistoryId: Number = 0;
+    planId: number = 0;
+    planName: string = "";
+    description: string = "";
+    sourcePath: string = "";
+    targetPath: string = "";
+    nextLaunchTime: number = 0;
+    lanuchInterval: number = 0;
+    latestHistoryId: number = 0;
     ignoreList: Array<String> = [];
     latestHistoryDetail: Object | null = null;
 }
