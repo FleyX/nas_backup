@@ -36,6 +36,10 @@ class filePathService {
         return folderList;
     }
 
+    static async createPath(pathStr: string) {
+        await fs.ensureDir(pathStr);
+    }
+
 }
 
 

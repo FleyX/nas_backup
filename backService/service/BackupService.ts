@@ -48,8 +48,8 @@ export default class BackupService {
             } else {
                 await BackupService.backup(history, plan.ignoreList, plan.sourcePath, plan.targetPath);
                 history.endTime = Date.now();
-                history.speed = history.fileNum > 0 ? Math.round(history.fileSize / ((history.endTime - history.startTime) / 1000) * 100) : 0;
-                history.fileSize = Math.round(history.fileSize * 100);
+                history.speed = history.fileNum > 0 ? Math.round(history.fileSize / ((history.endTime - history.startTime) / 1000) * 100) / 100 : 0;
+                history.fileSize = Math.round(history.fileSize * 100) / 100;
             }
             //插入一条备份记录
             let historyId = await HistoryDao.addOne(history);

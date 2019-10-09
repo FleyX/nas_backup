@@ -1,18 +1,36 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png" />
-    <HelloWorld msg="Welcome to Your Vue.js + TypeScript App" />
+    <el-menu default-active="1" mode="horizontal" @select="menuSelect">
+      <el-menu-item index="1">新增备份计划</el-menu-item>
+      <el-menu-item index="2">我的备份计划</el-menu-item>
+    </el-menu>
+    <!-- 新增备份计划 -->
+    <CreatePlan v-if="currentIndex == '1'" />
+    <!-- 我的备份计划 -->
+    <PlanList v-else />
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import HelloWorld from "@/components/HelloWorld.vue"; // @ is an alias to /src
-
-@Component({
+<script>
+// @ is an alias to /src
+import CreatePlan from "../components/CreatePlan";
+import PlanList from "../components/PlanList";
+export default {
+  name: "home",
   components: {
-    HelloWorld
+    CreatePlan,
+    PlanList
+  },
+  data() {
+    return {
+      currentIndex: "1"
+    };
+  },
+  methods: {
+    menuSelect(key) {
+      this.currentIndex = key;
+    }
   }
-})
-export default class Home extends Vue {}
+};
 </script>
+<style scoped lang="less"></style>

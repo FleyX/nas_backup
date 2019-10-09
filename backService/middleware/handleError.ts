@@ -1,9 +1,6 @@
 let f = async (ctx, next) => {
     try {
         await next();
-        if (ctx.body === undefined || ctx.body === null) {
-            ctx.body = "";
-        }
     } catch (error) {
         if (error.status != undefined) {
             ctx.status = error.status;

@@ -7,6 +7,8 @@ let config = {
   rootPath,
   port: process.env.PORT ? parseInt(process.env.PORT) : 8080,
   urlPrefix: '/backup/api',
+  dbPath: path.join(rootPath, "data.db"),
+  sqlPath: path.join(rootPath, "init.sql"),
   //是否为windows平台
   isWindows: process.platform.toLocaleLowerCase().includes("win"),
   mysqlConfig: {

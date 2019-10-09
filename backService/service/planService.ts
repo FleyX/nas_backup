@@ -1,6 +1,7 @@
 import config from '../config';
 import Plan from '../entity/Plan';
 import PlanDao from '../dao/PlanDao';
+import HistoryDao from '../dao/HistoryDao';
 
 class PlanService {
     /**
@@ -21,6 +22,13 @@ class PlanService {
      */
     static async deleteOne(planId: number) {
         await PlanDao.deleteByPlanId(planId);
+        await HistoryDao.deleteByPlanId(planId);
+    }
+
+    static async getAll() {
+        let res = await PlanDao.getAll();
+        res.forEach(item => item.ignoreList = JSON.parse(item.ignoreList as any));
+        return res;
     }
 }
 

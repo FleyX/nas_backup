@@ -7,10 +7,11 @@ import RouterMW from "./middleware/controllerEngine";
 import config from "./config";
 import handleError from "./middleware/handleError";
 import init from "./middleware/init";
-import { MysqlUtil } from './util/MysqlHelper';
+// import { MysqlUtil } from './util/MysqlHelper';
 import BackupService from './service/BackupService';
+import SqliteHelper from './util/SqliteHelper';
 
-MysqlUtil.createPool(config.mysqlConfig);
+// MysqlUtil.createPool(config.mysqlConfig);
 
 console.log(config);
 const app = new koa();
@@ -18,6 +19,8 @@ const app = new koa();
 let router = new Router({
   prefix: config.urlPrefix
 });
+
+app.use(require('koa-static')(path.join(config.rootPath, 'static')));
 
 //表单解析
 app.use(koaBody(config.bodyLimit));
@@ -27,10 +30,11 @@ app.use(init);
 app.use(handleError);
 
 app.use(RouterMW(router, path.join(config.rootPath, "dist/api")));
+(async () => {
+  await SqliteHelper.createDb();
+  // 开始备份计划
+  BackupService.start();
+  app.listen(config.port);
+  console.log(`server listened `, config.port);
+})();
 
-app.listen(config.port);
-
-console.log(`server listened `, config.port);
-
-// 开始备份计划
-BackupService.start();
