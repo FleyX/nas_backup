@@ -1,0 +1,11 @@
+{
+  "name": "nas_backup",
+  "script": "./dist/index.js",
+  "cwd": "./",
+  "env": {
+    "PORT": 8082
+  },
+  "log_file": "./log/combined.log",
+  "out_file": "./log/out.log",
+  "error_file": "./error.log"
+}

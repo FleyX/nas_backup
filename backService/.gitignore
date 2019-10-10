@@ -9,11 +9,5 @@ yarn-error.log*
 
 # Editor directories and files
 yarn.lock
-config/github.js
-config/cnblog.js
-files/*
-files/output/!.gitkeep
-files/mdFile/!.gitkeep
-files/temp/!.gitkeep
-log/file/!.gitkeep
+log
 data.db
