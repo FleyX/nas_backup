@@ -5,6 +5,7 @@ import TimeUtil from '../util/TimeUtil';
 import PlanDao from '../dao/PlanDao';
 import History from '../entity/History';
 import HistoryDao from '../dao/HistoryDao';
+import moment from 'moment';
 
 class BackupSum {
     fileNum: number = 0;
@@ -46,10 +47,20 @@ export default class BackupService {
                 history.endTime = Date.now();
                 history.comment = "源路径不存在，无法执行备份";
             } else {
+                //目标存放在当前日期目录下
+                let date = moment().format("yyyy-MM-dd");
+                plan.targetPath = path.join(plan.targetPath, date);
                 await BackupService.backup(history, plan.ignoreList, plan.sourcePath, plan.targetPath);
                 history.endTime = Date.now();
                 history.speed = history.fileNum > 0 ? Math.round(history.fileSize / ((history.endTime - history.startTime) / 1000) * 100) / 100 : 0;
                 history.fileSize = Math.round(history.fileSize * 100) / 100;
+                //根据保留的历史份数来删除多余的历史
+                let originPath = path.resolve(plan.targetPath);
+                let fileList = await fs.readdir(originPath);
+                fileList.sort((a, b) => a.localeCompare(b));
+                for (let i = plan.holdHistory, length = fileList.length; i < length; i++) {
+                    await fs.remove(path.join(originPath, fileList[i]));
+                }
             }
             //插入一条备份记录
             let historyId = await HistoryDao.addOne(history);
