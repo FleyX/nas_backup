@@ -10,7 +10,7 @@
       <el-table-column prop="fileSize" label="总大小(MB)" />
       <el-table-column prop="speed" label="备份速度(MB/s)" />
       <el-table-column prop="startTime" label="开始时间" />
-      <el-table-column prop="duration" label="耗时(s)" />
+      <el-table-column prop="duration" label="耗时(m)" />
       <el-table-column
         prop="comment"
         label="失败原因(空表示成功)"

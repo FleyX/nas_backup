@@ -8,8 +8,8 @@ export default class PlanDao {
      * @param plan plan
      */
     static async addOne(plan: Plan): Promise<number> {
-        let res = await SqliteHelper.db.run("insert into plan(planName,description,sourcePath,targetPath,nextLaunchTime,launchInterval,latestHistoryId,ignoreList) values(?,?,?,?,?,?,?,?)"
-            , [plan.planName, plan.description, plan.sourcePath, plan.targetPath, plan.nextLaunchTime, plan.lanuchInterval, plan.latestHistoryId, JSON.stringify(plan.ignoreList)]);
+        let res = await SqliteHelper.db.run("insert into plan(planName,description,sourcePath,targetPath,nextLaunchTime,launchInterval,latestHistoryId,ignoreList,holdHistory) values(?,?,?,?,?,?,?,?,?)"
+            , [plan.planName, plan.description, plan.sourcePath, plan.targetPath, plan.nextLaunchTime, plan.lanuchInterval, plan.latestHistoryId, JSON.stringify(plan.ignoreList),plan.holdHistory]);
         return res.lastID;
     }
 

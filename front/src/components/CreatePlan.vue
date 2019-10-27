@@ -23,6 +23,14 @@
         ></el-input-number
         >天
       </el-form-item>
+      <el-form-item label="保留历史">
+        <el-input-number
+          v-model="form.holdHistory"
+          :min="1"
+          :max="5"
+        ></el-input-number
+        >份
+      </el-form-item>
       <el-form-item label="备份路径">
         <span>{{ form.sourcePath }}&emsp;</span>
         <el-button type="primary" size="mini" @click="chosePath('sourcePath')"
@@ -88,6 +96,7 @@ export default {
         description: "",
         sourcePath: "",
         targetPath: "",
+        holdHistory: 0,
         lanuchInterval: 0,
         ignoreList: ["node_modules", ".git"]
       },

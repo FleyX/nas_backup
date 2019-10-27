@@ -48,16 +48,16 @@ export default class BackupService {
                 history.comment = "源路径不存在，无法执行备份";
             } else {
                 //目标存放在当前日期目录下
-                let date = moment().format("yyyy-MM-dd");
+                let date = moment().format("YYYY-MM-DD");
                 plan.targetPath = path.join(plan.targetPath, date);
                 await BackupService.backup(history, plan.ignoreList, plan.sourcePath, plan.targetPath);
                 history.endTime = Date.now();
                 history.speed = history.fileNum > 0 ? Math.round(history.fileSize / ((history.endTime - history.startTime) / 1000) * 100) / 100 : 0;
                 history.fileSize = Math.round(history.fileSize * 100) / 100;
                 //根据保留的历史份数来删除多余的历史
-                let originPath = path.resolve(plan.targetPath);
+                let originPath = path.dirname(plan.targetPath);
                 let fileList = await fs.readdir(originPath);
-                fileList.sort((a, b) => a.localeCompare(b));
+                fileList.sort((a, b) => b.localeCompare(a));
                 for (let i = plan.holdHistory, length = fileList.length; i < length; i++) {
                     await fs.remove(path.join(originPath, fileList[i]));
                 }

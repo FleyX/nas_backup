@@ -7,7 +7,8 @@ CREATE TABLE "plan" (
 "nextLaunchTime" INTEGER NOT NULL,
 "launchInterval" INTEGER NOT NULL,
 "latestHistoryId" INTEGER NOT NULL,
-"ignoreList" TEXT NOT NULL
+"ignoreList" TEXT NOT NULL,
+"holdHistory" INTEGER NOT NULL
 );
 CREATE TABLE "history" (
 "historyId" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
