@@ -13,58 +13,27 @@
           ></el-input>
         </el-form-item> -->
       <el-form-item label="开始时间">
-        <el-time-picker v-model="time"></el-time-picker>
+        <el-time-picker v-model="nextLaunchTime"></el-time-picker>
       </el-form-item>
       <el-form-item label="间隔时间">
-        <el-input-number
-          v-model="lanuchIntervalDays"
-          :min="1"
-          :max="30"
-        ></el-input-number
-        >天
+        <el-input-number v-model="form.lanuchInterval" :min="1" :max="30"></el-input-number>天
       </el-form-item>
       <el-form-item label="保留历史">
-        <el-input-number
-          v-model="form.holdHistory"
-          :min="1"
-          :max="5"
-        ></el-input-number
-        >份
+        <el-input-number v-model="form.holdHistory" :min="1" :max="5"></el-input-number>份
       </el-form-item>
       <el-form-item label="备份路径">
         <span>{{ form.sourcePath }}&emsp;</span>
-        <el-button type="primary" size="mini" @click="chosePath('sourcePath')"
-          >选择</el-button
-        >
+        <el-button type="primary" size="mini" @click="chosePath('sourcePath')">选择</el-button>
       </el-form-item>
       <el-form-item label="存储路径">
         <span>{{ form.targetPath }}&emsp;</span>
-        <el-button type="primary" size="mini" @click="chosePath('targetPath')"
-          >选择</el-button
-        >
+        <el-button type="primary" size="mini" @click="chosePath('targetPath')">选择</el-button>
       </el-form-item>
       <el-form-item label="忽略列表">
-        <el-tag
-          v-for="tag in form.ignoreList"
-          :key="tag"
-          closable
-          @close="closeTag(tag)"
-          type="success"
-          >{{ tag }}</el-tag
-        >
-        <el-input
-          class="input-new-tag"
-          v-if="inputVisible"
-          v-model="inputValue"
-          ref="saveTagInput"
-          size="small"
-          @keyup.enter.native="handleInputConfirm"
-          @blur="handleInputConfirm"
-        >
+        <el-tag v-for="tag in form.ignoreList" :key="tag" closable @close="closeTag(tag)" type="success">{{ tag }}</el-tag>
+        <el-input class="input-new-tag" v-if="inputVisible" v-model="inputValue" ref="saveTagInput" size="small" @keyup.enter.native="handleInputConfirm" @blur="handleInputConfirm">
         </el-input>
-        <el-button v-else class="button-new-tag" size="small" @click="showInput"
-          >+ New Tag</el-button
-        >
+        <el-button v-else class="button-new-tag" size="small" @click="showInput">+ New Tag</el-button>
       </el-form-item>
     </el-form>
     <div>
@@ -86,26 +55,25 @@ import { isEmpty } from "../util/StringUtil";
 export default {
   name: "CreatePlan",
   components: {
-    PathSelect
+    PathSelect,
   },
   data() {
     return {
       form: {
-        nextLaunchTime: 0,
+        nextLaunchTime: null,
         planName: "",
         description: "",
         sourcePath: "",
         targetPath: "",
-        holdHistory: 0,
-        lanuchInterval: 0,
-        ignoreList: ["node_modules", ".git"]
+        holdHistory: 1,
+        lanuchInterval: 1,
+        ignoreList: ["node_modules", ".git"],
       },
-      time: new Date(),
+      nextLaunchTime: new Date(),
       showDialog: false,
       type: "",
-      lanuchIntervalDays: 1,
       inputVisible: false,
-      inputValue: ""
+      inputValue: "",
     };
   },
   methods: {
@@ -138,37 +106,39 @@ export default {
       }
       this.showDialog = false;
     },
+    nextLaunchTimeChange(val, e) {
+      console.log(val, e);
+    },
     submit() {
       if (
         isEmpty(this.form.planName) ||
-        this.time === null ||
+        this.nextLaunchTime === null ||
         isEmpty(this.form.sourcePath) ||
         isEmpty(this.form.targetPath)
       ) {
         this.$message({
           message: "存在空值",
-          type: "error"
+          type: "error",
         });
         return;
       }
       if (this.form.sourcePath === this.form.targetPath) {
         this.$message({
           message: "源路径，目标路径相同",
-          type: "error"
+          type: "error",
         });
         return;
       }
-      this.form.nextLaunchTime = this.time.getTime();
       this.form.lanuchInterval = this.lanuchIntervalDays * 24 * 60 * 60 * 1000;
-
+      this.form.nextLaunchTime = this.nextLaunchTime.getTime();
       axios.put("/plan", this.form).then(() => {
         this.$message({
           message: "新增成功",
-          type: "success"
+          type: "success",
         });
       });
-    }
-  }
+    },
+  },
 };
 </script>
 <style scoped lang="less">

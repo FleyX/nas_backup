@@ -10,7 +10,7 @@ class PlanService {
      */
     static async addOne(plan: Plan) {
         plan.latestHistoryId = 0;
-        plan.latestHistoryDetail = null;
+        plan.lanuchInterval = plan.lanuchInterval * 24 * 60 * 60 * 1000;
         let id = await PlanDao.addOne(plan);
         plan.planId = id;
         return plan;

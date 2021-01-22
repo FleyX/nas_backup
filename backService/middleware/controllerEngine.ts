@@ -1,5 +1,6 @@
 import * as fs from 'fs-extra';
 import * as path from 'path';
+import log from '../util/LogUtil';
 
 async function addMapping(router, filePath: string) {
   let mapping = require(filePath).default;
@@ -7,21 +8,21 @@ async function addMapping(router, filePath: string) {
     if (url.startsWith('GET ')) {
       let temp = url.substring(4);
       router.get(temp, mapping[url]);
-      console.log(`----GET：${temp}`);
+      log.info(`----GET：${temp}`);
     } else if (url.startsWith('POST ')) {
       let temp = url.substring(5);
       router.post(temp, mapping[url]);
-      console.log(`----POST：${temp}`);
+      log.info(`----POST：${temp}`);
     } else if (url.startsWith('PUT ')) {
       let temp = url.substring(4);
       router.put(temp, mapping[url]);
-      console.log(`----PUT：${temp}`);
+      log.info(`----PUT：${temp}`);
     } else if (url.startsWith('DELETE ')) {
       let temp = url.substring(7);
       router.delete(temp, mapping[url]);
-      console.log(`----DELETE: ${temp}`);
+      log.info(`----DELETE: ${temp}`);
     } else {
-      console.log(`xxxxx无效路径：${url}`);
+      log.info(`xxxxx无效路径：${url}`);
     }
   }
 }
@@ -36,7 +37,7 @@ function addControllers(router, filePath) {
       addControllers(router, temp);
     } else {
       if (!temp.endsWith('Helper.js')) {
-        console.log('\n--开始处理: ' + element + '路由');
+        log.info('\n--开始处理: ' + element + '路由');
         addMapping(router, temp);
       }
     }

@@ -1,6 +1,6 @@
-// import { MysqlUtil } from '../util/MysqlHelper';
-import SqliteHelper from "../util/SqliteHelper";
+import { MysqlUtil } from '../util/MysqlHelper';
 import Plan from '../entity/Plan';
+import { OkPacket } from 'mysql2';
 
 export default class PlanDao {
     /**
@@ -8,9 +8,9 @@ export default class PlanDao {
      * @param plan plan
      */
     static async addOne(plan: Plan): Promise<number> {
-        let res = await SqliteHelper.db.run("insert into plan(planName,description,sourcePath,targetPath,nextLaunchTime,launchInterval,latestHistoryId,ignoreList,holdHistory) values(?,?,?,?,?,?,?,?,?)"
-            , [plan.planName, plan.description, plan.sourcePath, plan.targetPath, plan.nextLaunchTime, plan.lanuchInterval, plan.latestHistoryId, JSON.stringify(plan.ignoreList),plan.holdHistory]);
-        return res.lastID;
+        let res = await MysqlUtil.pool.execute("insert into plan(createdDate,updatedDate,planName,description,sourcePath,targetPath,nextLaunchTime,launchInterval,latestHistoryId,ignoreList,holdHistory) values(?,?,?,?,?,?,?,?,?,?,?)"
+            , [Date.now(), Date.now(), plan.planName, plan.description, plan.sourcePath, plan.targetPath, plan.nextLaunchTime, plan.lanuchInterval, plan.latestHistoryId, JSON.stringify(plan.ignoreList), plan.holdHistory]);
+        return (res[0] as unknown as OkPacket).insertId;
     }
 
     /**
@@ -18,7 +18,7 @@ export default class PlanDao {
      */
     static async getNeedActionPlan(): Promise<Array<Plan>> {
         let sql = `select * from plan where nextLaunchTime < ${Date.now()} order by nextLaunchTime`;
-        return await SqliteHelper.db.all(sql);
+        return (await MysqlUtil.pool.query(sql))[0] as unknown as Array<Plan>;
     }
 
     /**
@@ -26,15 +26,15 @@ export default class PlanDao {
      * @param id planId
      */
     static async updateNextlaunchTimeAndLatestHistoryId(planId: number, historyId: number) {
-        await SqliteHelper.db.run(`update plan set nextLaunchTime = nextLaunchTime+launchInterval,latestHistoryId=? where planId=?`
+        await MysqlUtil.pool.execute(`update plan set nextLaunchTime = nextLaunchTime+launchInterval,latestHistoryId=? where planId=?`
             , [historyId, planId]);
     }
 
     static async deleteByPlanId(planId: number) {
-        await SqliteHelper.db.run(`delete from plan where planid=?`, [planId]);
+        await MysqlUtil.pool.execute(`delete from plan where planid=?`, [planId]);
     }
 
     static async getAll(): Promise<Array<Plan>> {
-        return await SqliteHelper.db.all("select * from plan");
+        return (await MysqlUtil.pool.query("select * from plan"))[0] as unknown as Array<Plan>;
     }
 }

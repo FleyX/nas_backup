@@ -7,11 +7,10 @@ import RouterMW from "./middleware/controllerEngine";
 import config from "./config";
 import handleError from "./middleware/handleError";
 import init from "./middleware/init";
-// import { MysqlUtil } from './util/MysqlHelper';
+import { MysqlUtil } from './util/MysqlHelper';
 import BackupService from './service/BackupService';
-import SqliteHelper from './util/SqliteHelper';
+import log from './util/LogUtil';
 
-// MysqlUtil.createPool(config.mysqlConfig);
 
 console.log(config);
 const app = new koa();
@@ -31,10 +30,10 @@ app.use(handleError);
 
 app.use(RouterMW(router, path.join(config.rootPath, "dist/api")));
 (async () => {
-  await SqliteHelper.createDb();
+  await MysqlUtil.createPool(config.mysqlConfig);
   // 开始备份计划
   BackupService.start();
   app.listen(config.port);
-  console.log(`server listened `, config.port);
+  log.info(`server listened `, config.port);
 })();
 

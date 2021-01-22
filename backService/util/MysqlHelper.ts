@@ -1,4 +1,10 @@
 import mysql from "mysql2/promise";
+import config from '../config';
+import * as fs from "fs-extra";
+import * as path from 'path';
+import log from '../util/LogUtil';
+
+const HISTORY_NAME = "history.json";
 
 interface Res {
     rows: any;
@@ -8,8 +14,45 @@ interface Res {
 class MysqlUtil {
     public static pool: mysql.Pool = null;
 
-    static async createPool(config: any) {
-        MysqlUtil.pool = mysql.createPool(config);
+    static async createPool(mysqlConfig: any) {
+        MysqlUtil.pool = await mysql.createPool(mysqlConfig);
+        let basePath = path.join(config.rootPath, "sqls");
+        let hisPath = path.join(basePath, HISTORY_NAME);
+        let history: Array<string>;
+        if (fs.existsSync(hisPath)) {
+            history = JSON.parse(await fs.readFile(hisPath, "utf-8"));
+        } else {
+            history = new Array();
+        }
+        //执行数据库
+        let files = (await fs.readdir(basePath)).sort((a, b) => a.localeCompare(b)).filter(item => !(item === HISTORY_NAME));
+        let error = null;
+        for (let i = 0; i < files.length; i++) {
+            if (history.indexOf(files[i]) > -1) {
+                log.info("sql无需重复执行:", files[i]);
+                continue;
+            }
+            let sqlLines = (await fs.readFile(path.join(basePath, files[i]), 'utf-8')).split(/[\r\n]/g);
+            try {
+                let sql = "";
+                for (let j = 0; j < sqlLines.length; j++) {
+                    sql = sql + sqlLines[j];
+                    if (sqlLines[j].endsWith(";")) {
+                        await MysqlUtil.pool.execute(sql);
+                        sql = "";
+                    }
+                }
+                log.info("sql执行成功:", files[i]);
+                history.push(files[i]);
+            } catch (err) {
+                error = err;
+                break;
+            }
+        }
+        await fs.writeFile(hisPath, JSON.stringify(history));
+        if (error != null) {
+            throw error;
+        }
     }
 
     static async getRows(sql: string, params: Array<any>, connection: mysql.PoolConnection = null): Promise<Array<any>> {
