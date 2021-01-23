@@ -1,6 +1,4 @@
-{
-  "name": "nas_backup",
-  "script": "./dist/index.js",
+{ "name": "nas_backup", "script": "./dist/index.js",
   "cwd": "./",
   "env": {
     "PORT": 8082,
