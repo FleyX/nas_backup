@@ -18,20 +18,23 @@ export default class BackupService {
     static isRun: boolean = false;
 
     static async start() {
-        BackupService.timer = setInterval(async () => {
-            if (BackupService.isRun) {
-                return;
-            }
-            BackupService.isRun = true;
-            try {
-                await BackupService.run();
-            } catch (err) {
-                console.error("执行备份计划失败");
-                console.error(err);
-            } finally {
-                BackupService.isRun = false;
-            }
-        }, 10 * 1000);
+        BackupService.timer = setInterval(BackupService.runOnce, 10 * 60 * 1000);
+        await BackupService.runOnce();
+    }
+
+    static async runOnce() {
+        if (BackupService.isRun) {
+            return;
+        }
+        BackupService.isRun = true;
+        try {
+            await BackupService.run();
+        } catch (err) {
+            console.error("执行备份计划失败");
+            console.error(err);
+        } finally {
+            BackupService.isRun = false;
+        }
     }
 
     static async run() {
@@ -55,7 +58,7 @@ export default class BackupService {
                 history.speed = history.fileNum > 0 ? Math.round(history.fileSize / ((history.endTime - history.startTime) / 1000) * 100) / 100 : 0;
                 history.fileSize = Math.round(history.fileSize * 100) / 100;
                 //进行gzip压缩
-                await ProcesHelper.exec(`tar -czf ${plan.targetPath}.tar.gz ${plan.targetPath}`);
+                await ProcesHelper.exec(`cd ${path.dirname(plan.targetPath)};tar -czf ${date}.tar.gz ${date}`);
                 await fs.remove(plan.targetPath);
 
                 //根据保留的历史份数来删除多余的历史

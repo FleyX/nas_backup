@@ -1,16 +1,15 @@
 import * as childPrecess from 'child_process';
 
 class ProcessHelper {
-    static exec(cmd) {
+    static exec(cmd): Promise<string> {
         return new Promise((resolve, reject) => {
             childPrecess.exec(cmd, (error, stdout, stderr) => {
                 if (error) {
                     reject(error);
+                } if (stderr) {
+                    reject(stderr);
                 } else {
-                    resolve({
-                        stdout,
-                        stderr
-                    })
+                    resolve(stdout)
                 }
             })
         })
