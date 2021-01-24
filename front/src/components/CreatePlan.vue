@@ -1,5 +1,4 @@
 <template>
-  <!-- 新增备份计划 -->
   <div>
     <el-form label-width="5em">
       <el-form-item label="计划名称">
@@ -129,7 +128,6 @@ export default {
         });
         return;
       }
-      this.form.lanuchInterval = this.lanuchIntervalDays * 24 * 60 * 60 * 1000;
       this.form.nextLaunchTime = this.nextLaunchTime.getTime();
       axios.put("/plan", this.form).then(() => {
         this.$message({

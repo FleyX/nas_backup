@@ -1,4 +1,5 @@
 <template>
+
   <div class="hello">
     <div class="v-center">
       <span>当前路径:</span>

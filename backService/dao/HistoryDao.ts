@@ -19,7 +19,7 @@ export default class HistoryDao {
      * @param planId planId
      */
     static async deleteByPlanId(planId: number) {
-        await MysqlUtil.pool.execute("delete from history where planId=?", planId);
+        await MysqlUtil.pool.execute("delete from history where planId=?", [planId]);
     }
 
     /**
