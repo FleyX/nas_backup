@@ -5,7 +5,7 @@ const rootPath = path.resolve(__dirname, '..');
 
 let config = {
   rootPath,
-  port: process.env.PORT ? parseInt(process.env.PORT) : 8080,
+  port: process.env.PORT ? parseInt(process.env.PORT) : 8089,
   urlPrefix: '/backup/api',
   //是否为windows平台
   isWindows: process.platform.toLocaleLowerCase().includes("win"),

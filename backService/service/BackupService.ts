@@ -58,7 +58,7 @@ export default class BackupService {
                 history.speed = history.fileNum > 0 ? Math.round(history.fileSize / ((history.endTime - history.startTime) / 1000) * 100) / 100 : 0;
                 history.fileSize = Math.round(history.fileSize * 100) / 100;
                 //进行gzip压缩
-                await ProcesHelper.exec(`cd ${path.dirname(plan.targetPath)};tar -czf ${date}.tar.gz ${date}`);
+                await ProcesHelper.exec(`cd ${path.dirname(plan.targetPath)};mkdir ${date}-gzip;tar czf - ${date}|split -b 5000m - ${date}-gzip/data.tar.gz`);
                 await fs.remove(plan.targetPath);
 
                 //根据保留的历史份数来删除多余的历史
